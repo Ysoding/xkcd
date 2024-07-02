@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 )
 
 type Downloader struct {
@@ -27,9 +28,8 @@ func (d *Downloader) Download() error {
 
 	end := getCurrentComicNum()
 	for i := start; i <= end; i++ {
-		if i > 10 {
-			return nil
-		}
+		fmt.Printf("Donload %d comic\n", i)
+
 		bytes, err := fetch(fmt.Sprintf("https://xkcd.com/%d/info.0.json", i))
 		if err != nil {
 			fmt.Printf("Get %d error: %v\n", i, err)
@@ -43,6 +43,7 @@ func (d *Downloader) Download() error {
 		}
 	}
 
+	os.WriteFile(getLastComicNumFilepath(), []byte(fmt.Sprintf("%d", end)), 0644)
 	return nil
 }
 

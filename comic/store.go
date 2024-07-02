@@ -2,8 +2,11 @@ package comic
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
+	"strings"
 )
 
 var (
@@ -25,7 +28,7 @@ func createLocalStore() error {
 	if err != nil {
 		return err
 	}
-	f, err := os.Create(localStoreDirectory + "/curr")
+	f, err := os.Create(getLastComicNumFilepath())
 	if err != nil {
 		return err
 	}
@@ -34,7 +37,15 @@ func createLocalStore() error {
 }
 
 func getLastComicNum() int {
-	return 0
+	bytes, err := os.ReadFile(getLastComicNumFilepath())
+	if err != nil {
+		panic(err)
+	}
+
+	strContent := strings.TrimSpace(string(bytes))
+
+	number, _ := strconv.Atoi(strContent)
+	return number
 }
 
 func save(bytes []byte) error {
@@ -44,6 +55,11 @@ func save(bytes []byte) error {
 		return err
 	}
 
-	c.Save()
-	return nil
+	path := filepath.Join(localStoreDirectory, fmt.Sprintf("%d.json", c.Num))
+
+	return os.WriteFile(path, bytes, 0644)
+}
+
+func getLastComicNumFilepath() string {
+	return filepath.Join(localStoreDirectory, "lastNum")
 }

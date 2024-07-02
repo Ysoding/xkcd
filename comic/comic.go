@@ -1,12 +1,5 @@
 package comic
 
-import (
-	"encoding/json"
-	"fmt"
-	"os"
-	"path/filepath"
-)
-
 type Comic struct {
 	Num        int
 	Link       string
@@ -19,15 +12,4 @@ type Comic struct {
 	Year       string
 	Month      string
 	Day        string
-}
-
-func (c *Comic) Save() error {
-	bytes, err := json.Marshal(c)
-	if err != nil {
-		return err
-	}
-
-	path := filepath.Join(localStoreDirectory, fmt.Sprintf("%d.json", c.Num))
-
-	return os.WriteFile(path, bytes, 0644)
 }
